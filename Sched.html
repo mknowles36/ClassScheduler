@@ -83,7 +83,7 @@ function appendTableRow(data) {
 
 function scheduleComparator( a, b )
 {
-    return ( b[5] - a[5] );
+    return ( b[b.length-1] - a[a.length-1] );
 }
 
 
@@ -135,12 +135,11 @@ function ClassTimeComparator( a, b )
 var MIN_CLASS_TIME = 2 * 60 / 5; // 10:00am
 function genCourses( depth, schedule, result )
 {
-    if ( depth == 5 ) {
+    if ( depth == classes.length ) {
 
         // Sort the classes in the schedule 
         var tmpSchedule = [];
-        var i = 0;
-        for ( i = 0; i < 5; i++ ) {
+        for ( var i = 0; i < schedule.length; i++ ) {
             tmpSchedule[i] = schedule[i];
         }
         tmpSchedule.sort( ClassTimeComparator );
@@ -148,7 +147,7 @@ function genCourses( depth, schedule, result )
         // Evaluate
         var days = [];
         var score = 0;
-        for ( i = 0; i < 5; i++ ) {
+        for ( var i = 0; i < tmpSchedule.length; i++ ) {
             var ct = tmpSchedule[i];
             var start = ct.start;
             var end = ct.end;
@@ -182,8 +181,8 @@ function genCourses( depth, schedule, result )
             days[dayIndex]++;
         }
 
-        // - Penalty if there is a day with more than 2 classes on it
-        for ( i = 0 ; i < 5; i++ ) {
+        // - Penalty for every day with more than 2 classes
+        for ( var i = 0 ; i < 5; i++ ) {
             if ( days[i] > 2 ) {
                 score += parseInt( document.penalties.tooManyClassesPerDayPenalty.value );
             }
@@ -195,9 +194,8 @@ function genCourses( depth, schedule, result )
         result.push( tmpSchedule );
 
     } else {
-        // Iterate over the 5 classes of the course
-        var i = 0;
-        for ( i = 0; i < 5; i++ ) {
+        // Iterate over the classes of the course
+        for ( var i = 0; i < classes[depth].length; i++ ) {
 
             // First make sure that this class is actually available
             var id = "c" + depth + "s" + i;
