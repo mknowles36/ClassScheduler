@@ -1,0 +1,480 @@
+<HTML>
+    <HEAD>
+        <SCRIPT LANGUAGE="JavaScript">
+var theTable, theTableBody, classes
+
+// Load 5 arrays of 5 with the start and end of each class
+var classes = [
+        [
+            new ClassTime( "AHSS", "1000", "0101", "M", "8:05", "10:45" ),
+            new ClassTime( "AHSS", "1000", "0201", "M", "11:45", "14:25" ),
+            new ClassTime( "AHSS", "1000", "0301", "M", "12:40", "15:20" ),
+            new ClassTime( "AHSS", "1000", "0401", "W", "13:35", "16:15" ),
+            new ClassTime( "AHSS", "1000", "0501", "W", "17:15", "19:55" ),
+        ], [
+            new ClassTime( "BADM", "1000", "01", "T", "11:45", "14:25" ),
+            new ClassTime( "BADM", "1000", "02", "T", "15:25", "18:05" ),
+            new ClassTime( "BADM", "1000", "03", "W", "15:25", "18:05" ),
+            new ClassTime( "BADM", "1000", "04", "F", "8:05", "10:45" ),
+            new ClassTime( "BADM", "1000", "05", "F", "12:40", "15:20" ),
+        ], [
+            new ClassTime( "BADM", "1010", "01", "M", "15:25", "18:05" ),
+            new ClassTime( "BADM", "1010", "02", "M", "17:15", "19:55" ),
+            new ClassTime( "BADM", "1010", "03", "T", "8:05", "10:45" ),
+            new ClassTime( "BADM", "1010", "04", "R", "10:50", "13:30" ),
+            new ClassTime( "BADM", "1010", "05", "R", "14:30", "17:10" ),
+        ], [
+            new ClassTime( "BADM", "1030", "01", "T", "9:00", "11:40" ),
+            new ClassTime( "BADM", "1030", "02", "T", "11:45", "14:25" ),
+            new ClassTime( "BADM", "1030", "03", "W", "8:05", "10:45" ),
+            new ClassTime( "BADM", "1030", "04", "W", "12:40", "15:20" ),
+            new ClassTime( "BADM", "1030", "05", "W", "16:20", "19:00" ),
+        ], [
+            new ClassTime( "BADM", "1040", "01", "W", "8:05", "10:45" ),
+            new ClassTime( "BADM", "1040", "02", "W", "10:50", "13:30" ),
+            new ClassTime( "BADM", "1040", "03", "R", "9:00", "11:40" ),
+            new ClassTime( "BADM", "1040", "04", "R", "12:40", "15:20" ),
+            new ClassTime( "BADM", "1040", "05", "F", "12:40", "15:20" ),
+        ]
+];
+
+
+function init() {
+    // theTable = (document.all) ? document.all.myTABLE : document.getElementById("schedule")
+    theTable = document.getElementById("schedule");
+    theTableBody = theTable.tBodies[0];
+}
+
+
+function genSchedule()
+{
+    var result = [];
+    var schedule = [];
+
+    genCourses( 0, schedule, result );
+
+    // Sort the result by badness
+    result.sort( scheduleComparator );
+
+    var prevLength = theTableBody.rows.length
+    theTableBody.innerHTML = "";
+    var newLength = theTableBody.rows.length;
+
+    for ( var i = 0; i < result.length; i++ ) {
+       appendTableRow( result[i] );
+    }
+}
+
+
+function appendTableRow(data) {
+    var newRow = theTableBody.insertRow(theTableBody.rows.length);
+
+    var i = 0;
+    for ( i = 0; i < data.length; i++ ) {
+        var newCell = newRow.insertCell(i);
+        newCell.innerHTML = data[i];
+    }
+}
+
+
+function scheduleComparator( a, b )
+{
+    return ( b[5] - a[5] );
+}
+
+
+// Define the ClassTime object
+function ClassTime( program, course, section, day, startTime, endTime )
+{
+    // ParseTime(): Returns the interval number (in the range 0..143) corresponding to this start time
+    // 0 == 8:00am
+    // 143 == 7:55pm
+    this.parseTime = function( time ) {
+        // Find the ':' and split it into two components
+        var colonIndex = time.indexOf( ":" );
+        var hours = time.substring( 0, colonIndex );
+        var mins = time.substring( colonIndex + 1 );
+        return ( hours - 8 ) * 12 + mins / 5;
+    };
+
+    var dayValues = [];
+    dayValues['M'] = 0 * 144;
+    dayValues['T'] = 1 * 144;
+    dayValues['W'] = 2 * 144;
+    dayValues['R'] = 3 * 144;
+    dayValues['F'] = 4 * 144;
+
+    this.program = program;
+    this.course = course;
+    this.section = section;
+    this.day = day;
+    this.startTime = startTime;
+    this.endTime = endTime;
+
+    var dayValue = dayValues[ day ];
+    this.start = this.parseTime( startTime ) + dayValue;
+    this.end = this.parseTime( endTime ) + dayValue;
+
+    this.toString = function() {
+        return this.day + ":" + this.startTime + "-" + this.endTime + " (" + this.program + "/" + this.course + "/" + this.section + ")";
+    };
+}
+
+
+function ClassTimeComparator( a, b )
+{
+    return ( a.start - b.start );
+}
+
+
+// Recursive function 
+var MIN_CLASS_TIME = 2 * 60 / 5; // 10:00am
+function genCourses( depth, schedule, result )
+{
+    if ( depth == 5 ) {
+
+        // Sort the classes in the schedule 
+        var tmpSchedule = [];
+        var i = 0;
+        for ( i = 0; i < 5; i++ ) {
+            tmpSchedule[i] = schedule[i];
+        }
+        tmpSchedule.sort( ClassTimeComparator );
+
+        // Evaluate
+        var days = [];
+        var score = 0;
+        for ( i = 0; i < 5; i++ ) {
+            var ct = tmpSchedule[i];
+            var start = ct.start;
+            var end = ct.end;
+
+            // Scoring:
+            // - Penalty proportional to the class's start time before 10:00am
+            var dayStart = start % 144;
+            if ( dayStart < MIN_CLASS_TIME ) {
+                score += parseInt( document.penalties.beforeTenAMPenalty.value );
+            }
+
+            // - Penalty for each class on a Monday or Friday
+            var day = ct.day;
+            if ( start < 144 ) {
+                score += parseInt( document.penalties.mondaysPenalty.value );
+            } else if ( start >= ( 144 * 4 ) ) {
+                score += parseInt( document.penalties.fridaysPenalty.value );
+            }
+
+            // - Penalty for every inter-class gap that is less than 1 hour
+            if ( i > 0 ) {
+                if ( ( start - tmpSchedule[i-1]._end ) < 12 ) {
+                    score += parseInt( document.penalties.internClassPenalty.value );
+                }
+            }
+
+            // Record which day this one starts on, for the days-with-more-than-2-classes penalty
+            var dayIndex = start / 144;
+            days[dayIndex]++;
+        }
+
+        // - Penalty if there is a day with more than 2 classes on it
+        for ( i = 0 ; i < 5; i++ ) {
+            if ( days[i] > 2 ) {
+                score += document.penalties.tooManyClassesPerDayPenalty.value;
+            }
+        }
+
+        tmpSchedule.push( score )
+
+        // Record this schedule in the result
+        result.push( tmpSchedule );
+
+    } else {
+        // Iterate over the 5 classes of the course
+        var i = 0;
+        for ( i = 0; i < 5; i++ ) {
+
+            // First make sure that this class is actually available
+            var id = "c" + depth + "s" + i;
+            if ( !document.getElementsByName( id )[0].checked ) {
+                continue;
+            }
+
+            // Make sure no other classes overlap with this one
+            var ct = classes[depth][i];
+
+            var bad = false;
+            var j;
+            for ( j = 0; j < depth; j++ ) {
+                if ( !( ct.end < schedule[j].start ||
+                        ct.start > schedule[j].end ) ) {
+                            bad = true;
+                            break;
+                        }
+            }
+
+            if ( !bad ) {
+                // All is ok from an overlap perspective, so proceed to the next level
+                schedule[depth] = ct;
+                genCourses( depth + 1, schedule, result );
+            }
+        }
+    }
+}
+        </SCRIPT>
+    </HEAD>
+    <BODY onload="init(); genSchedule()">
+        <table>
+            <tr><td>
+                <form name="classes">
+                <table rules=all>
+                    <thead>
+                    <tr><th>Still<br>Available</th><th>Program</th><th>Course</th><th>Section</th><th>Day</th><th>Start Time</th><th>End Time</th></tr>
+                    <tbody>
+                    <tr>
+                        <td align=center><input name="c0s0" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>AHSS</td>
+                        <td align=center>1000</td>
+                        <td align=right>0101</td>
+                        <td align=center>M</td>
+                        <td align=right>8:05</td>
+                        <td align=right>10:45</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c0s1" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>AHSS</td>
+                        <td align=center>1000</td>
+                        <td align=right>0201</td>
+                        <td align=center>M</td>
+                        <td align=right>11:45</td>
+                        <td align=right>14:25</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c0s2" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>AHSS</td>
+                        <td align=center>1000</td>
+                        <td align=right>0301</td>
+                        <td align=center>M</td>
+                        <td align=right>12:40</td>
+                        <td align=right>15:20</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c0s3" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>AHSS</td>
+                        <td align=center>1000</td>
+                        <td align=right>0401</td>
+                        <td align=center>W</td>
+                        <td align=right>13:35</td>
+                        <td align=right>16:15</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c0s4" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>AHSS</td>
+                        <td align=center>1000</td>
+                        <td align=right>0501</td>
+                        <td align=center>W</td>
+                        <td align=right>17:15</td>
+                        <td align=right>19:55</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c1s0" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1000</td>
+                        <td align=right>01</td>
+                        <td align=center>T</td>
+                        <td align=right>11:45</td>
+                        <td align=right>14:25</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c1s1" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1000</td>
+                        <td align=right>02</td>
+                        <td align=center>T</td>
+                        <td align=right>15:25</td>
+                        <td align=right>18:05</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c1s2" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1000</td>
+                        <td align=right>03</td>
+                        <td align=center>W</td>
+                        <td align=right>15:25</td>
+                        <td align=right>18:05</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c1s3" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1000</td>
+                        <td align=right>04</td>
+                        <td align=center>F</td>
+                        <td align=right>8:05</td>
+                        <td align=right>10:45</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c1s4" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1000</td>
+                        <td align=right>05</td>
+                        <td align=center>F</td>
+                        <td align=right>12:40</td>
+                        <td align=right>15:20</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c2s0" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1010</td>
+                        <td align=right>01</td>
+                        <td align=center>M</td>
+                        <td align=right>15:25</td>
+                        <td align=right>18:05</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c2s1" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1010</td>
+                        <td align=right>02</td>
+                        <td align=center>M</td>
+                        <td align=right>17:15</td>
+                        <td align=right>19:55</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c2s2" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1010</td>
+                        <td align=right>03</td>
+                        <td align=center>T</td>
+                        <td align=right>8:05</td>
+                        <td align=right>10:45</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c2s3" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1010</td>
+                        <td align=right>04</td>
+                        <td align=center>R</td>
+                        <td align=right>10:50</td>
+                        <td align=right>13:30</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c2s4" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1010</td>
+                        <td align=right>05</td>
+                        <td align=center>R</td>
+                        <td align=right>14:30</td>
+                        <td align=right>17:10</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c3s0" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1030</td>
+                        <td align=right>01</td>
+                        <td align=center>T</td>
+                        <td align=right>9:00</td>
+                        <td align=right>11:40</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c3s1" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1030</td>
+                        <td align=right>02</td>
+                        <td align=center>T</td>
+                        <td align=right>11:45</td>
+                        <td align=right>14:25</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c3s2" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1030</td>
+                        <td align=right>03</td>
+                        <td align=center>W</td>
+                        <td align=right>8:05</td>
+                        <td align=right>10:45</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c3s3" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1030</td>
+                        <td align=right>04</td>
+                        <td align=center>W</td>
+                        <td align=right>12:40</td>
+                        <td align=right>15:20</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c3s4" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1030</td>
+                        <td align=right>05</td>
+                        <td align=center>W</td>
+                        <td align=right>16:20</td>
+                        <td align=right>19:00</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c4s0" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1040</td>
+                        <td align=right>01</td>
+                        <td align=center>W</td>
+                        <td align=right>8:05</td>
+                        <td align=right>10:45</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c4s1" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1040</td>
+                        <td align=right>02</td>
+                        <td align=center>W</td>
+                        <td align=right>10:50</td>
+                        <td align=right>13:30</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c4s2" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1040</td>
+                        <td align=right>03</td>
+                        <td align=center>R</td>
+                        <td align=right>9:00</td>
+                        <td align=right>11:40</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c4s3" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1040</td>
+                        <td align=right>04</td>
+                        <td align=center>R</td>
+                        <td align=right>12:40</td>
+                        <td align=right>15:20</td>
+                    </tr>
+                    <tr>
+                        <td align=center><input name="c4s4" onchange="genSchedule()" type=checkbox checked></td>
+                        <td align=center>BADM</td>
+                        <td align=center>1040</td>
+                        <td align=right>05</td>
+                        <td align=center>F</td>
+                        <td align=right>12:40</td>
+                        <td align=right>15:20</td>
+                    </tr>
+                </table>
+            </form>
+            </td><td>
+            <DIV STYLE="overflow: auto; width: 1400; height: 600; 
+                        border-left: 1px gray solid; border-bottom: 1px gray solid; 
+                        padding:0px; margin: 0px">
+                        <table rules=all cellpadding=3 id="schedule"><tbody></tbody></table>
+            </DIV>
+            </td></tr>
+        </table>
+        <br>
+        <form name="penalties">
+        <table rules=all>
+            <tr><th>Penalty Type</th><th>Penalty Amount</th></tr>
+            <tr><td>Start time before 10:00am</td><td><input name="beforeTenAMPenalty" value="-200" onchange="genSchedule()"></td></tr>
+            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="-100" onchange="genSchedule()"></td></tr>
+            <tr><td>Fridays</td><td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
+            <tr><td>Time between classes &lt; 1 hour</td><td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td></tr>
+            <tr><td>Penalty for every day with more than 2 classes in it&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr>
+        </table>
+    </form>
+    </BODY>
+</HTML>

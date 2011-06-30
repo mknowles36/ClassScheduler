@@ -1,1 +1,0 @@
-javac BrenSched.java -Xlint
