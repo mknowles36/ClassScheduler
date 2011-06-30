@@ -57,7 +57,11 @@ function genSchedule()
     result.sort( scheduleComparator );
 
     var prevLength = theTableBody.rows.length
-    theTableBody.innerHTML = "";
+    while( theTableBody.hasChildNodes() ) {
+        theTableBody.removeChild( theTableBody.firstChild );
+    }
+    
+    // theTableBody.innerHTML = "";
     var newLength = theTableBody.rows.length;
 
     for ( var i = 0; i < result.length; i++ ) {
@@ -157,7 +161,6 @@ function genCourses( depth, schedule, result )
             }
 
             // - Penalty for each class on a Monday or Friday
-            var day = ct.day;
             if ( start < 144 ) {
                 score += parseInt( document.penalties.mondaysPenalty.value );
             } else if ( start >= ( 144 * 4 ) ) {
@@ -166,20 +169,23 @@ function genCourses( depth, schedule, result )
 
             // - Penalty for every inter-class gap that is less than 1 hour
             if ( i > 0 ) {
-                if ( ( start - tmpSchedule[i-1]._end ) < 12 ) {
-                    score += parseInt( document.penalties.internClassPenalty.value );
+                if ( ( start - tmpSchedule[i-1].end ) < 12 ) {
+                    score += parseInt( document.penalties.interClassPenalty.value );
                 }
             }
 
             // Record which day this one starts on, for the days-with-more-than-2-classes penalty
-            var dayIndex = start / 144;
+            var dayIndex = Math.floor( start / 144 );
+            if ( typeof days[dayIndex] == "undefined" ) {
+                days[dayIndex] = 0;
+            }
             days[dayIndex]++;
         }
 
         // - Penalty if there is a day with more than 2 classes on it
         for ( i = 0 ; i < 5; i++ ) {
             if ( days[i] > 2 ) {
-                score += document.penalties.tooManyClassesPerDayPenalty.value;
+                score += parseInt( document.penalties.tooManyClassesPerDayPenalty.value );
             }
         }
 
@@ -226,7 +232,7 @@ function genCourses( depth, schedule, result )
         <table>
             <tr><td>
                 <form name="classes">
-                <table rules=all>
+                <table border=1 rules=all>
                     <thead>
                     <tr><th>Still<br>Available</th><th>Program</th><th>Course</th><th>Section</th><th>Day</th><th>Start Time</th><th>End Time</th></tr>
                     <tbody>
@@ -470,10 +476,10 @@ function genCourses( depth, schedule, result )
         <table rules=all>
             <tr><th>Penalty Type</th><th>Penalty Amount</th></tr>
             <tr><td>Start time before 10:00am</td><td><input name="beforeTenAMPenalty" value="-200" onchange="genSchedule()"></td></tr>
-            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="-100" onchange="genSchedule()"></td></tr>
+            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
             <tr><td>Fridays</td><td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
             <tr><td>Time between classes &lt; 1 hour</td><td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td></tr>
-            <tr><td>Penalty for every day with more than 2 classes in it&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr>
+            <tr><td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr>
         </table>
     </form>
     </BODY>
