@@ -43,6 +43,53 @@ function init() {
     // theTable = (document.all) ? document.all.myTABLE : document.getElementById("schedule")
     theTable = document.getElementById("schedule");
     theTableBody = theTable.tBodies[0];
+
+    // Reconstruct the classes table from the "classes" data itself
+    var classesTable = document.getElementsByName("classesTable")[0];
+    var classesTableBody = classesTable.tBodies[0];
+    while( classesTableBody.hasChildNodes() ) {
+        classesTableBody.removeChild( classesTableBody.firstChild );
+    }
+    for ( var i = 0; i < classes.length; i++ ) {
+        var thisClass = classes[i]
+        for ( var sectionNum = 0; sectionNum < thisClass.length; sectionNum++ ) {
+
+            var section = thisClass[sectionNum]
+            var newRow = classesTableBody.insertRow(classesTableBody.rows.length);
+            if ( (i % 2) == 0 ) {
+                newRow.bgColor = "#ededed";
+            }
+
+            var cellNum = 0;
+            var newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.innerHTML = "<input name=\"c" + i + "s" + sectionNum + "\" onchange=\"genSchedule()\" type=checkbox checked>"
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.innerHTML = section.program;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.innerHTML = section.course;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="right";
+            newCell.innerHTML = section.section;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.innerHTML = section.day;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="right";
+            newCell.innerHTML = section.startTime;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="right";
+            newCell.innerHTML = section.endTime;
+        }
+    }
 }
 
 
@@ -228,236 +275,12 @@ function genCourses( depth, schedule, result )
     <BODY onload="init(); genSchedule()">
         <table>
             <tr><td>
-                <form name="classes">
-                <table border=1 rules=all>
+                <form name="classesForm">
+                <table border=1 name="classesTable" rules=all>
                     <thead>
                     <tr><th>Still<br>Available</th><th>Program</th><th>Course</th><th>Section</th><th>Day</th><th>Start Time</th><th>End Time</th></tr>
                     <tbody>
-                    <tr>
-                        <td align=center><input name="c0s0" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>AHSS</td>
-                        <td align=center>1000</td>
-                        <td align=right>0101</td>
-                        <td align=center>M</td>
-                        <td align=right>8:05</td>
-                        <td align=right>10:45</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c0s1" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>AHSS</td>
-                        <td align=center>1000</td>
-                        <td align=right>0201</td>
-                        <td align=center>M</td>
-                        <td align=right>11:45</td>
-                        <td align=right>14:25</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c0s2" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>AHSS</td>
-                        <td align=center>1000</td>
-                        <td align=right>0301</td>
-                        <td align=center>M</td>
-                        <td align=right>12:40</td>
-                        <td align=right>15:20</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c0s3" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>AHSS</td>
-                        <td align=center>1000</td>
-                        <td align=right>0401</td>
-                        <td align=center>W</td>
-                        <td align=right>13:35</td>
-                        <td align=right>16:15</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c0s4" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>AHSS</td>
-                        <td align=center>1000</td>
-                        <td align=right>0501</td>
-                        <td align=center>W</td>
-                        <td align=right>17:15</td>
-                        <td align=right>19:55</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c1s0" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1000</td>
-                        <td align=right>01</td>
-                        <td align=center>T</td>
-                        <td align=right>11:45</td>
-                        <td align=right>14:25</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c1s1" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1000</td>
-                        <td align=right>02</td>
-                        <td align=center>T</td>
-                        <td align=right>15:25</td>
-                        <td align=right>18:05</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c1s2" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1000</td>
-                        <td align=right>03</td>
-                        <td align=center>W</td>
-                        <td align=right>15:25</td>
-                        <td align=right>18:05</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c1s3" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1000</td>
-                        <td align=right>04</td>
-                        <td align=center>F</td>
-                        <td align=right>8:05</td>
-                        <td align=right>10:45</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c1s4" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1000</td>
-                        <td align=right>05</td>
-                        <td align=center>F</td>
-                        <td align=right>12:40</td>
-                        <td align=right>15:20</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c2s0" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1010</td>
-                        <td align=right>01</td>
-                        <td align=center>M</td>
-                        <td align=right>15:25</td>
-                        <td align=right>18:05</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c2s1" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1010</td>
-                        <td align=right>02</td>
-                        <td align=center>M</td>
-                        <td align=right>17:15</td>
-                        <td align=right>19:55</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c2s2" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1010</td>
-                        <td align=right>03</td>
-                        <td align=center>T</td>
-                        <td align=right>8:05</td>
-                        <td align=right>10:45</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c2s3" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1010</td>
-                        <td align=right>04</td>
-                        <td align=center>R</td>
-                        <td align=right>10:50</td>
-                        <td align=right>13:30</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c2s4" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1010</td>
-                        <td align=right>05</td>
-                        <td align=center>R</td>
-                        <td align=right>14:30</td>
-                        <td align=right>17:10</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c3s0" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1030</td>
-                        <td align=right>01</td>
-                        <td align=center>T</td>
-                        <td align=right>9:00</td>
-                        <td align=right>11:40</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c3s1" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1030</td>
-                        <td align=right>02</td>
-                        <td align=center>T</td>
-                        <td align=right>11:45</td>
-                        <td align=right>14:25</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c3s2" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1030</td>
-                        <td align=right>03</td>
-                        <td align=center>W</td>
-                        <td align=right>8:05</td>
-                        <td align=right>10:45</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c3s3" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1030</td>
-                        <td align=right>04</td>
-                        <td align=center>W</td>
-                        <td align=right>12:40</td>
-                        <td align=right>15:20</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c3s4" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1030</td>
-                        <td align=right>05</td>
-                        <td align=center>W</td>
-                        <td align=right>16:20</td>
-                        <td align=right>19:00</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c4s0" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1040</td>
-                        <td align=right>01</td>
-                        <td align=center>W</td>
-                        <td align=right>8:05</td>
-                        <td align=right>10:45</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c4s1" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1040</td>
-                        <td align=right>02</td>
-                        <td align=center>W</td>
-                        <td align=right>10:50</td>
-                        <td align=right>13:30</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c4s2" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1040</td>
-                        <td align=right>03</td>
-                        <td align=center>R</td>
-                        <td align=right>9:00</td>
-                        <td align=right>11:40</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c4s3" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1040</td>
-                        <td align=right>04</td>
-                        <td align=center>R</td>
-                        <td align=right>12:40</td>
-                        <td align=right>15:20</td>
-                    </tr>
-                    <tr>
-                        <td align=center><input name="c4s4" onchange="genSchedule()" type=checkbox checked></td>
-                        <td align=center>BADM</td>
-                        <td align=center>1040</td>
-                        <td align=right>05</td>
-                        <td align=center>F</td>
-                        <td align=right>12:40</td>
-                        <td align=right>15:20</td>
-                    </tr>
+                    </tbody>
                 </table>
             </form>
             </td><td>
