@@ -56,7 +56,6 @@ function genSchedule()
     // Sort the result by badness
     result.sort( scheduleComparator );
 
-    var prevLength = theTableBody.rows.length
     while( theTableBody.hasChildNodes() ) {
         theTableBody.removeChild( theTableBody.firstChild );
     }
