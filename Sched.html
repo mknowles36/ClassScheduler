@@ -178,7 +178,8 @@ function ClassTimeComparator( a, b )
 
 
 // Recursive function 
-var MIN_CLASS_TIME = 2 * 60 / 5; // 10:00am
+var MIN_CLASS_TIME = 5 * 30 / 5; // (5 half-hour periods after 8:00am = 10:30am, broken down into 5-minute chunks)
+var MAX_CLASS_TIME = 9 * 60 / 5; // (9 hour-long periods after 8:00am = 5:00pm, broken down into 5-minute chunks)
 function genCourses( depth, schedule, result )
 {
     if ( depth == classes.length ) {
@@ -199,10 +200,16 @@ function genCourses( depth, schedule, result )
             var end = ct.end;
 
             // Scoring:
-            // - Penalty proportional to the class's start time before 10:00am
+            // - Penalty for classes starting before 10:30am
             var dayStart = start % 144;
             if ( dayStart < MIN_CLASS_TIME ) {
-                score += parseInt( document.penalties.beforeTenAMPenalty.value );
+                score += parseInt( document.penalties.earlyMorningPenalty.value );
+            }
+
+            // - Penalty for classes starting after 5:00pm
+            var dayStart = start % 144;
+            if ( dayStart >= MAX_CLASS_TIME ) {
+                score += parseInt( document.penalties.eveningPenalty.value );
             }
 
             // - Penalty for each class on a Monday or Friday
@@ -227,12 +234,13 @@ function genCourses( depth, schedule, result )
             days[dayIndex]++;
         }
 
+        // **** NOT USING THIS FOR NOW ****
         // - Penalty for every day with more than 2 classes
-        for ( var i = 0 ; i < 5; i++ ) {
-            if ( days[i] > 2 ) {
-                score += parseInt( document.penalties.tooManyClassesPerDayPenalty.value );
-            }
-        }
+        // for ( var i = 0 ; i < 5; i++ ) {
+        //     if ( days[i] > 2 ) {
+        //         score += parseInt( document.penalties.tooManyClassesPerDayPenalty.value );
+        //     }
+        // }
 
         tmpSchedule.push( score )
 
@@ -295,11 +303,12 @@ function genCourses( depth, schedule, result )
         <form name="penalties">
         <table rules=all>
             <tr><th>Penalty Type</th><th>Penalty Amount</th></tr>
-            <tr><td>Start time before 10:00am</td><td><input name="beforeTenAMPenalty" value="-200" onchange="genSchedule()"></td></tr>
+            <tr><td>Start time before 10:30am</td><td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td></tr>
+            <tr><td>Start time after 5:00pm</td><td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td></tr>
             <tr><td>Mondays</td><td><input name="mondaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
             <tr><td>Fridays</td><td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
             <tr><td>Time between classes &lt; 1 hour</td><td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td></tr>
-            <tr><td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr>
+            <!-- <tr><td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr> -->
         </table>
     </form>
     </BODY>
