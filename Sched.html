@@ -88,6 +88,18 @@ function init() {
             newCell = newRow.insertCell(cellNum++);
             newCell.align="right";
             newCell.innerHTML = section.endTime;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="right";
+            if ( typeof section.labStartTime != 'undefined' ) {
+                newCell.innerHTML = section.labStartTime;
+            }
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="right";
+            if ( typeof section.labEndTime != 'undefined' ) {
+                newCell.innerHTML = section.labEndTime;
+            }
         }
     }
 }
@@ -134,7 +146,7 @@ function scheduleComparator( a, b )
 
 
 // Define the ClassTime object
-function ClassTime( program, course, section, day, startTime, endTime )
+function ClassTime( program, course, section, day, startTime, endTime, labStartTime, labEndTime )
 {
     // ParseTime(): Returns the interval number (in the range 0..143) corresponding to this start time
     // 0 == 8:00am
@@ -160,10 +172,16 @@ function ClassTime( program, course, section, day, startTime, endTime )
     this.day = day;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.labStartTime = labStartTime;
+    this.labEndTime = labEndTime;
 
     var dayValue = dayValues[ day ];
     this.start = this.parseTime( startTime ) + dayValue;
     this.end = this.parseTime( endTime ) + dayValue;
+    if ( typeof labStartTime != 'undefined' ) {
+        this.labStart = this.parseTime( labStartTime ) + dayValue;
+        this.labEnd = this.parseTime( labEndTime ) + dayValue;
+    }
 
     this.toString = function() {
         return this.day + ":" + this.startTime + "-" + this.endTime + " (" + this.program + "/" + this.course + "/" + this.section + ")";
@@ -292,7 +310,17 @@ function genCourses( depth, schedule, result )
         <form name="classesForm">
             <table border=1 name="classesTable" rules=all>
                 <thead>
-                    <tr><th>Still<br>Available</th><th>Program</th><th>Course</th><th>Section</th><th>Day</th><th>Start Time</th><th>End Time</th></tr>
+                    <tr>
+                        <th>Still<br>Available</th>
+                        <th>Program</th>
+                        <th>Course</th>
+                        <th>Section</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Lab Start</th>
+                        <th>Lab End</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
