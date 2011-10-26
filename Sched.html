@@ -199,7 +199,7 @@ function genCourses( depth, schedule, result )
             var end = ct.end;
 
             // Scoring:
-            // - Penalty proportional to the class's start time before 10:00am
+            // - Penalty proportional to the class start time before 10:00am
             var dayStart = start % 144;
             if ( dayStart < MIN_CLASS_TIME ) {
                 score += parseInt( document.penalties.beforeTenAMPenalty.value );
