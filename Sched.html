@@ -6,37 +6,37 @@ var theTable, theTableBody, classes
 // Load the classes array the details of each class
 var classes = [
         [
-            new ClassTime( "AHSS", "1010", "01", "M", "9:00",  "11:40" ),
-            new ClassTime( "AHSS", "1010", "02", "M", "9:00",  "11:40" ),
-            new ClassTime( "AHSS", "1010", "03", "M", "12:40", "15:20" ),
-            new ClassTime( "AHSS", "1010", "04", "M", "12:40", "15:20" ),
-            new ClassTime( "AHSS", "1010", "05", "R", "18:10", "20:50" ),
+            new ClassTime( "SCMA", "2000", "01", "R", "13:35", "16:15" ),
+            new ClassTime( "SCMA", "2000", "02", "F", "9:00", "11:40" ),
+            new ClassTime( "SCMA", "2000", "03", "F", "9:00", "11:40" ),
+            new ClassTime( "SCMA", "2000", "04", "F", "12:40", "15:20" ),
+            new ClassTime( "SCMA", "2000", "05", "F", "12:40", "15:20" ),
         ], [
-            new ClassTime( "BADM", "1060", "0101", "T", "9:55",  "12:35" ),
-            new ClassTime( "BADM", "1060", "0202", "T", "13:35", "16:15" ),
-            new ClassTime( "BADM", "1060", "0303", "W", "8:05",  "10:45" ),
-            new ClassTime( "BADM", "1060", "0404", "W", "11:45", "14:25" ),
-            new ClassTime( "BADM", "1060", "0505", "W", "18:10", "20:50" ),
+            new ClassTime( "BADM", "2010", "01", "M", "8:05", "10:45" ),
+            new ClassTime( "BADM", "2010", "02", "M", "14:30", "17:10" ),
+            new ClassTime( "BADM", "2010", "03", "W", "9:00", "11:40" ),
+            new ClassTime( "BADM", "2010", "04", "W", "12:40", "15:20" ),
         ], [
-            new ClassTime( "SCMA", "1000", "01", "M", "17:15", "19:55" ),
-            new ClassTime( "SCMA", "1000", "02", "R", "10:50", "13:30" ),
-            new ClassTime( "SCMA", "1000", "03", "R", "14:30", "17:10" ),
-            new ClassTime( "SCMA", "1000", "04", "F", "9:00",  "11:40" ),
-            new ClassTime( "SCMA", "1000", "05", "F", "12:40", "15:20" ),
+            new ClassTime( "BADM", "2020", "01", "M", "8:05", "10:45" ),
+            new ClassTime( "BADM", "2020", "02", "M", "11:45", "14:25" ),
+            new ClassTime( "BADM", "2020", "03", "T", "10:50", "13:30" ),
+            new ClassTime( "BADM", "2020", "04", "T", "17:15",  "19:55" ),
+            new ClassTime( "BADM", "2020", "05", "W", "17:15", "19:55" ),
         ], [
-            new ClassTime( "AHSS", "1030", "01", "T", "12:40", "15:20" ),
-            new ClassTime( "AHSS", "1030", "02", "T", "17:15", "19:55" ),
-            new ClassTime( "AHSS", "1030", "03", "W", "14:30", "17:10" ),
-            new ClassTime( "AHSS", "1030", "04", "R", "15:25", "18:05" ),
-            new ClassTime( "AHSS", "1030", "05", "F", "9:00",  "11:40" ),
+            new ClassTime( "BADM", "2000", "01", "T", "8:05", "10:45" ),
+            new ClassTime( "BADM", "2000", "02", "T", "17:15", "19:55" ),
+            new ClassTime( "BADM", "2000", "03", "W", "13:35", "16:15" ),
+            new ClassTime( "BADM", "2000", "04", "R", "9:00", "11:40" ),
+            new ClassTime( "BADM", "2000", "05", "R", "14:40", "15:20" ),
         ], [
-            new ClassTime( "BADM", "1020", "0101", "T", "9:00",  "11:40" ),
-            new ClassTime( "BADM", "1020", "0202", "T", "12:40", "15:20" ),
-            new ClassTime( "BADM", "1020", "0303", "W", "15:25", "18:05" ),
-            new ClassTime( "BADM", "1020", "0404", "F", "9:00",  "11:40" ),
-            new ClassTime( "BADM", "1020", "0505", "F", "12:40", "15:20" ),
+            new ClassTime( "BADM", "1030", "01", "T", "9:00", "11:40" ),
+            new ClassTime( "BADM", "1030", "02", "T", "11:45", "14:25" ),
+            new ClassTime( "BADM", "1030", "03", "W", "8:05", "10:45" ),
+            new ClassTime( "BADM", "1030", "04", "W", "14:40", "15:20" ),
+            new ClassTime( "BADM", "1030", "05", "W", "16:20", "19:00" ),
         ]
 ];
+
 
 
 function init() {
@@ -215,6 +215,8 @@ function genCourses( depth, schedule, result )
             // - Penalty for each class on a Monday or Friday
             if ( start < 144 ) {
                 score += parseInt( document.penalties.mondaysPenalty.value );
+            } else if ( start >= ( 144 * 3 ) && start < ( 144 * 4 ) ) {
+                score += parseInt( document.penalties.thursdaysPenalty.value );
             } else if ( start >= ( 144 * 4 ) ) {
                 score += parseInt( document.penalties.fridaysPenalty.value );
             }
@@ -305,7 +307,8 @@ function genCourses( depth, schedule, result )
             <tr><th>Penalty Type</th><th>Penalty Amount</th></tr>
             <tr><td>Start time before 10:30am</td><td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td></tr>
             <tr><td>Start time after 5:00pm</td><td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td></tr>
-            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
+            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td></tr>
+            <tr><td>Thursdays</td><td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td></tr>
             <tr><td>Fridays</td><td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
             <tr><td>Time between classes &lt; 1 hour</td><td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td></tr>
             <!-- <tr><td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr> -->
