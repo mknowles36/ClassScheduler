@@ -111,7 +111,7 @@ function genSchedule()
     while( theTableBody.hasChildNodes() ) {
         theTableBody.removeChild( theTableBody.firstChild );
     }
-    
+
     // theTableBody.innerHTML = "";
     var newLength = theTableBody.rows.length;
 
@@ -182,14 +182,14 @@ function SectionComparator( a, b )
 }
 
 
-// Recursive function 
+// Recursive function
 var MIN_CLASS_TIME = 5 * 30 / 5; // (5 half-hour periods after 8:00am = 10:30am, broken down into 5-minute chunks)
 var MAX_CLASS_TIME = 9 * 60 / 5; // (9 hour-long periods after 8:00am = 5:00pm, broken down into 5-minute chunks)
 function genCourses( depth, schedule, result )
 {
     if ( depth == classes.length ) {
 
-        // Sort the classes in the schedule 
+        // Sort the classes in the schedule
         var tmpSchedule = [];
         for ( var i = 0; i < schedule.length; i++ ) {
             tmpSchedule[i] = schedule[i];
@@ -307,8 +307,9 @@ function genCourses( depth, schedule, result )
                 </table>
             </form>
             </td><td>
-            <DIV STYLE="overflow: auto; width: 1400; height: 600; 
-                        border-left: 1px gray solid; border-bottom: 1px gray solid; 
+            <DIV STYLE="overflow: auto; width: 1400; height: 600;
+                        border-top: 1px gray solid; border-bottom: 1px gray solid;
+                        border-left: 1px gray solid; border-right: 1px gray solid;
                         padding:0px; margin: 0px">
                         <table rules=all cellpadding=3 id="schedule"><tbody></tbody></table>
             </DIV>
@@ -316,7 +317,8 @@ function genCourses( depth, schedule, result )
         </table>
         <br>
         <form name="penalties">
-        <table rules=all>
+        <table rules=all style="border-top: 1px gray solid; border-bottom: 1px gray solid;
+                                border-left: 1px gray solid; border-right: 1px gray solid;">
             <tr>
                 <th>Penalty Type</th>
                 <th>Penalty Amount</th>
