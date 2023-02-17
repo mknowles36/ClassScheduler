@@ -64,9 +64,7 @@ function init() {
             }
 
             var cellNum = 0;
-            var newCell = newRow.insertCell(cellNum++);
-            newCell.align="center";
-            newCell.innerHTML = "<input name=\"c" + i + "s" + sectionNum + "\" onchange=\"genSchedule()\" type=checkbox checked>"
+            var newCell;
 
             newCell = newRow.insertCell(cellNum++);
             newCell.align="center";
@@ -91,6 +89,10 @@ function init() {
             newCell = newRow.insertCell(cellNum++);
             newCell.align="right";
             newCell.innerHTML = section.endTime;
+
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.innerHTML = "<input name=\"c" + i + "s" + sectionNum + "\" onchange=\"genSchedule()\" type=checkbox checked>"
         }
     }
 }
@@ -291,7 +293,15 @@ function genCourses( depth, schedule, result )
                 <form name="classesForm">
                 <table border=1 name="classesTable" rules=all>
                     <thead>
-                    <tr><th>Still<br>Available</th><th>Program</th><th>Course</th><th>Section</th><th>Day</th><th>Start Time</th><th>End Time</th></tr>
+                    <tr>
+                        <th>Program</th>
+                        <th>Course</th>
+                        <th>Section</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Still<br>Available</th>
+                    </tr>
                     <tbody>
                     </tbody>
                 </table>
