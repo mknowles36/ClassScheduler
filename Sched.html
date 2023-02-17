@@ -317,14 +317,38 @@ function genCourses( depth, schedule, result )
         <br>
         <form name="penalties">
         <table rules=all>
-            <tr><th>Penalty Type</th><th>Penalty Amount</th></tr>
-            <tr><td>Start time before 10:30am</td><td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td></tr>
-            <tr><td>Start time after 5:00pm</td><td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td></tr>
-            <tr><td>Mondays</td><td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td></tr>
-            <tr><td>Thursdays</td><td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td></tr>
-            <tr><td>Fridays</td><td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td></tr>
-            <tr><td>Time between classes &lt; 1 hour</td><td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td></tr>
-            <!-- <tr><td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td><td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td></tr> -->
+            <tr>
+                <th>Penalty Type</th>
+                <th>Penalty Amount</th>
+            </tr>
+            <tr>
+                <td>Start time before 10:30am</td>
+                <td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td>
+            </tr>
+            <tr>
+                <td>Start time after 5:00pm</td>
+                <td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td>
+            </tr>
+            <tr>
+                <td>Mondays</td>
+                <td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td>
+            </tr>
+            <tr>
+                <td>Thursdays</td>
+                <td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td>
+            </tr>
+            <tr>
+                <td>Fridays</td>
+                <td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td>
+            </tr>
+            <tr>
+                <td>Time between classes &lt; 1 hour</td>
+                <td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td>
+            </tr>
+            <!-- <tr>
+                <td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td>
+                <td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td>
+            </tr> -->
         </table>
     </form>
     </BODY>
