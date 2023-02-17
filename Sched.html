@@ -9,34 +9,34 @@ var theTableBody
 // Load the classes array the details of each class
 var classes = [
         [
-            new ClassTime( "SCMA", "2000", "01", "R", "13:35", "16:15" ),
-            new ClassTime( "SCMA", "2000", "02", "F", "9:00", "11:40" ),
-            new ClassTime( "SCMA", "2000", "03", "F", "9:00", "11:40" ),
-            new ClassTime( "SCMA", "2000", "04", "F", "12:40", "15:20" ),
-            new ClassTime( "SCMA", "2000", "05", "F", "12:40", "15:20" ),
+            new Section( "SCMA", "2000", "01", "R", "13:35", "16:15" ),
+            new Section( "SCMA", "2000", "02", "F", "9:00", "11:40" ),
+            new Section( "SCMA", "2000", "03", "F", "9:00", "11:40" ),
+            new Section( "SCMA", "2000", "04", "F", "12:40", "15:20" ),
+            new Section( "SCMA", "2000", "05", "F", "12:40", "15:20" ),
         ], [
-            new ClassTime( "BADM", "2010", "01", "M", "8:05", "10:45" ),
-            new ClassTime( "BADM", "2010", "02", "M", "14:30", "17:10" ),
-            new ClassTime( "BADM", "2010", "03", "W", "9:00", "11:40" ),
-            new ClassTime( "BADM", "2010", "04", "W", "12:40", "15:20" ),
+            new Section( "BADM", "2010", "01", "M", "8:05", "10:45" ),
+            new Section( "BADM", "2010", "02", "M", "14:30", "17:10" ),
+            new Section( "BADM", "2010", "03", "W", "9:00", "11:40" ),
+            new Section( "BADM", "2010", "04", "W", "12:40", "15:20" ),
         ], [
-            new ClassTime( "BADM", "2020", "01", "M", "8:05", "10:45" ),
-            new ClassTime( "BADM", "2020", "02", "M", "11:45", "14:25" ),
-            new ClassTime( "BADM", "2020", "03", "T", "10:50", "13:30" ),
-            new ClassTime( "BADM", "2020", "04", "T", "17:15",  "19:55" ),
-            new ClassTime( "BADM", "2020", "05", "W", "17:15", "19:55" ),
+            new Section( "BADM", "2020", "01", "M", "8:05", "10:45" ),
+            new Section( "BADM", "2020", "02", "M", "11:45", "14:25" ),
+            new Section( "BADM", "2020", "03", "T", "10:50", "13:30" ),
+            new Section( "BADM", "2020", "04", "T", "17:15",  "19:55" ),
+            new Section( "BADM", "2020", "05", "W", "17:15", "19:55" ),
         ], [
-            new ClassTime( "BADM", "2000", "01", "T", "8:05", "10:45" ),
-            new ClassTime( "BADM", "2000", "02", "T", "17:15", "19:55" ),
-            new ClassTime( "BADM", "2000", "03", "W", "13:35", "16:15" ),
-            new ClassTime( "BADM", "2000", "04", "R", "9:00", "11:40" ),
-            new ClassTime( "BADM", "2000", "05", "R", "14:40", "15:20" ),
+            new Section( "BADM", "2000", "01", "T", "8:05", "10:45" ),
+            new Section( "BADM", "2000", "02", "T", "17:15", "19:55" ),
+            new Section( "BADM", "2000", "03", "W", "13:35", "16:15" ),
+            new Section( "BADM", "2000", "04", "R", "9:00", "11:40" ),
+            new Section( "BADM", "2000", "05", "R", "14:40", "15:20" ),
         ], [
-            new ClassTime( "BADM", "1030", "01", "T", "9:00", "11:40" ),
-            new ClassTime( "BADM", "1030", "02", "T", "11:45", "14:25" ),
-            new ClassTime( "BADM", "1030", "03", "W", "8:05", "10:45" ),
-            new ClassTime( "BADM", "1030", "04", "W", "14:40", "15:20" ),
-            new ClassTime( "BADM", "1030", "05", "W", "16:20", "19:00" ),
+            new Section( "BADM", "1030", "01", "T", "9:00", "11:40" ),
+            new Section( "BADM", "1030", "02", "T", "11:45", "14:25" ),
+            new Section( "BADM", "1030", "03", "W", "8:05", "10:45" ),
+            new Section( "BADM", "1030", "04", "W", "14:40", "15:20" ),
+            new Section( "BADM", "1030", "05", "W", "16:20", "19:00" ),
         ]
 ];
 
@@ -138,8 +138,8 @@ function scheduleComparator( a, b )
 }
 
 
-// Define the ClassTime object
-function ClassTime( program, course, section, day, startTime, endTime )
+// Define the Section object
+function Section( program, course, section, day, startTime, endTime )
 {
     // ParseTime(): Returns the interval number (in the range 0..143) corresponding to this start time
     // 0 == 8:00am
@@ -176,7 +176,7 @@ function ClassTime( program, course, section, day, startTime, endTime )
 }
 
 
-function ClassTimeComparator( a, b )
+function SectionComparator( a, b )
 {
     return ( a.start - b.start );
 }
@@ -194,7 +194,7 @@ function genCourses( depth, schedule, result )
         for ( var i = 0; i < schedule.length; i++ ) {
             tmpSchedule[i] = schedule[i];
         }
-        tmpSchedule.sort( ClassTimeComparator );
+        tmpSchedule.sort( SectionComparator );
 
         // Evaluate
         var days = [];
