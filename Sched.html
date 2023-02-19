@@ -50,50 +50,84 @@ function init() {
     // Reconstruct the classes table from the "classes" data itself
     var classesTable = document.getElementsByName("classesTable")[0];
     var classesTableBody = classesTable.tBodies[0];
+
+    // Clear out any existing rows to prep for updated schedule
     while( classesTableBody.hasChildNodes() ) {
         classesTableBody.removeChild( classesTableBody.firstChild );
     }
+
+    // Go through all the sections of all the classes and accumulate sections that are
+    // in the same program.  And then, whenever the program name changes, dump out
+    // all the accumulated sections into the table.  Also dump it out at the end,
+    // as the program name effectively changes to "" then too.
+    var currentProgram = "";
+    var sectionsInCurrentProgram = [];
     for ( var i = 0; i < classes.length; i++ ) {
         var thisClass = classes[i]
         for ( var sectionNum = 0; sectionNum < thisClass.length; sectionNum++ ) {
-
             var section = thisClass[sectionNum]
-            var newRow = classesTableBody.insertRow(classesTableBody.rows.length);
-            if ( (i % 2) == 0 ) {
-                newRow.bgColor = "#ededed";
+
+            if (currentProgram != section.program) {
+                emitScheduleRows(classesTableBody, sectionsInCurrentProgram);
+                sectionsInCurrentProgram.length = 0;
+                currentProgram = section.program;
             }
 
-            var cellNum = 0;
-            var newCell;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="center";
-            newCell.innerHTML = section.program;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="center";
-            newCell.innerHTML = section.course;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="right";
-            newCell.innerHTML = section.section;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="center";
-            newCell.innerHTML = section.day;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="right";
-            newCell.innerHTML = section.startTime;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="right";
-            newCell.innerHTML = section.endTime;
-
-            newCell = newRow.insertCell(cellNum++);
-            newCell.align="center";
-            newCell.innerHTML = "<input name=\"c" + i + "s" + sectionNum + "\" onchange=\"genSchedule()\" type=checkbox checked>"
+            sectionsInCurrentProgram.push([section, i, sectionNum]);
         }
+    }
+
+    // Emit the rows of the last program
+    emitScheduleRows(classesTableBody, sectionsInCurrentProgram);
+}
+
+
+function emitScheduleRows(classesTableBody, sectionsInCurrentProgram) {
+    // Generate new rows for this program's sections
+    for ( var i = 0; i < sectionsInCurrentProgram.length; i++ ) {
+        var programSection = sectionsInCurrentProgram[i][0]
+        var courseNum = sectionsInCurrentProgram[i][1]
+        var sectionNum = sectionsInCurrentProgram[i][2]
+
+        var newRow = classesTableBody.insertRow(classesTableBody.rows.length);
+
+        if ( (courseNum % 2) == 1 ) {
+            newRow.bgColor = "#ededed";
+        }
+
+        var cellNum = 0;
+        var newCell;
+        if (i == 0) {
+            newCell = newRow.insertCell(cellNum++);
+            newCell.align="center";
+            newCell.rowSpan = sectionsInCurrentProgram.length;
+            newCell.bgColor = "#fff";
+            newCell.innerHTML = programSection.program;
+        }
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="center";
+        newCell.innerHTML = programSection.course;
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="right";
+        newCell.innerHTML = programSection.section;
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="center";
+        newCell.innerHTML = programSection.day;
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="right";
+        newCell.innerHTML = programSection.startTime;
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="right";
+        newCell.innerHTML = programSection.endTime;
+
+        newCell = newRow.insertCell(cellNum++);
+        newCell.align="center";
+        newCell.innerHTML = "<input name=\"c" + courseNum + "s" + sectionNum + "\" onchange=\"genSchedule()\" type=checkbox checked>"
     }
 }
 
