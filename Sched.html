@@ -174,9 +174,15 @@ function appendTableRow(data) {
     var newRow = theTableBody.insertRow(theTableBody.rows.length);
 
     var i = 0;
-    for ( i = 0; i < data.length; i++ ) {
-        var newCell = newRow.insertCell(i);
-        newCell.innerHTML = data[i];
+
+    // Insert badness amount as the first cell
+    var newCell = newRow.insertCell(i++);
+    newCell.innerHTML = data[data.length-1];
+
+    // Insert actual class cells
+    for ( var j = 0; j < data.length - 1; j++ ) {
+        var newCell = newRow.insertCell(i++);
+        newCell.innerHTML = data[j];
     }
 }
 
@@ -422,12 +428,12 @@ function genCourses( depth, schedule, result )
                                       border-left: 1px gray solid;
                                       border-right: 1px gray solid;">
                             <thead>
+                                <th style="width: 50px;">Badness</th>
                                 <th style="width: 50px;">Class 1</th>
                                 <th style="width: 50px;">Class 2</th>
                                 <th style="width: 50px;">Class 3</th>
                                 <th style="width: 50px;">Class 4</th>
                                 <th style="width: 50px;">Class 5</th>
-                                <th style="width: 50px;">Badness</th>
                             </thead>
                             <tbody></tbody>
                         </table>
