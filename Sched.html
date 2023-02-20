@@ -257,28 +257,28 @@ function genCourses( depth, schedule, result )
             // - Penalty for classes starting before 10:30am
             var dayStart = start % 144;
             if ( dayStart < MIN_CLASS_TIME ) {
-                score += parseInt( document.penalties.earlyMorningPenalty.value );
+                score += parseInt( document.penalties1.earlyMorningPenalty.value );
             }
 
             // - Penalty for classes starting after 5:00pm
             var dayStart = start % 144;
             if ( dayStart >= MAX_CLASS_TIME ) {
-                score += parseInt( document.penalties.eveningPenalty.value );
+                score += parseInt( document.penalties1.eveningPenalty.value );
             }
 
             // - Penalty for each class on a Monday or Friday
             if ( start < 144 ) {
-                score += parseInt( document.penalties.mondaysPenalty.value );
+                score += parseInt( document.penalties2.mondaysPenalty.value );
             } else if ( start >= ( 144 * 3 ) && start < ( 144 * 4 ) ) {
-                score += parseInt( document.penalties.thursdaysPenalty.value );
+                score += parseInt( document.penalties2.thursdaysPenalty.value );
             } else if ( start >= ( 144 * 4 ) ) {
-                score += parseInt( document.penalties.fridaysPenalty.value );
+                score += parseInt( document.penalties2.fridaysPenalty.value );
             }
 
             // - Penalty for every inter-class gap that is less than 1 hour
             if ( i > 0 ) {
                 if ( ( start - tmpSchedule[i-1].end ) < 12 ) {
-                    score += parseInt( document.penalties.interClassPenalty.value );
+                    score += parseInt( document.penalties1.interClassPenalty.value );
                 }
             }
 
@@ -294,7 +294,7 @@ function genCourses( depth, schedule, result )
         // - Penalty for every day with more than 2 classes
         // for ( var i = 0 ; i < 5; i++ ) {
         //     if ( days[i] > 2 ) {
-        //         score += parseInt( document.penalties.tooManyClassesPerDayPenalty.value );
+        //         score += parseInt( document.penalties1.tooManyClassesPerDayPenalty.value );
         //     }
         // }
 
@@ -338,69 +338,96 @@ function genCourses( depth, schedule, result )
     </HEAD>
     <BODY onload="init(); genSchedule()">
         <table>
-            <tr><td>
-                <form name="classesForm">
-                <table border=1 name="classesTable" rules=all>
-                    <thead>
-                    <tr>
-                        <th>Program</th>
-                        <th>Course</th>
-                        <th>Section</th>
-                        <th>Day</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Still<br>Available</th>
-                    </tr>
-                    <tbody>
-                    </tbody>
-                </table>
-            </form>
-            </td><td>
-            <DIV STYLE="overflow: auto; width: 1400; height: 600;
-                        border-top: 1px gray solid; border-bottom: 1px gray solid;
-                        border-left: 1px gray solid; border-right: 1px gray solid;
-                        padding:0px; margin: 0px">
-                        <table rules=all cellpadding=3 id="schedule"><tbody></tbody></table>
-            </DIV>
-            </td></tr>
+            <tr vAlign=top>
+                <td>
+                    <form name="penalties1">
+                        <table rules=all style="border-top: 1px gray solid; border-bottom: 1px gray solid;
+                                                border-left: 1px gray solid; border-right: 1px gray solid;">
+                            <tr>
+                                <th>Penalty Type</th>
+                                <th>Penalty Amount</th>
+                            </tr>
+                            <tr>
+                                <td>Start time before 10:30am</td>
+                                <td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td>
+                            </tr>
+                            <tr>
+                                <td>Start time after 5:00pm</td>
+                                <td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td>
+                            </tr>
+                            <tr>
+                                <td>Time between classes &lt; 1 hour</td>
+                                <td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td>
+                            </tr>
+                            <!-- <tr>
+                                <td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td>
+                                <td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td>
+                            </tr> -->
+                        </table>
+                    </form>
+                </td>
+                <td>
+                    <form name="penalties2">
+                        <table rules=all style="border-top: 1px gray solid; border-bottom: 1px gray solid;
+                                                border-left: 1px gray solid; border-right: 1px gray solid;">
+                            <tr>
+                                <th>Penalty Type</th>
+                                <th>Penalty Amount</th>
+                            </tr>
+                            <tr>
+                                <td>Mondays</td>
+                                <td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td>
+                            </tr>
+                            <tr>
+                                <td>Thursdays</td>
+                                <td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td>
+                            </tr>
+                            <tr>
+                                <td>Fridays</td>
+                                <td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+            <tr vAlign=top>
+                <td>
+                    <form name="classesForm">
+                        <table border=1 name="classesTable" rules=all>
+                            <thead>
+                                <tr>
+                                    <th>Program</th>
+                                    <th>Course</th>
+                                    <th>Section</th>
+                                    <th>Day</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Still<br>Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </form>
+                </td><td>
+                    <DIV STYLE="overfow: auto; height: 600px;
+                                border-top: 1px gray solid; border-bottom: 1px gray solid;
+                                border-left: 1px gray solid; border-right: 1px gray solid;
+                                padding:0px; margin: 0px">
+                        <table rules=all cellpadding=3 id="schedule">
+                            <thead>
+                                <th style="width: 50px;">Class 1</th>
+                                <th style="width: 50px;">Class 2</th>
+                                <th style="width: 50px;">Class 3</th>
+                                <th style="width: 50px;">Class 4</th>
+                                <th style="width: 50px;">Class 5</th>
+                                <th style="width: 50px;">Badness</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </DIV>
+                </td>
+            </tr>
         </table>
-        <br>
-        <form name="penalties">
-        <table rules=all style="border-top: 1px gray solid; border-bottom: 1px gray solid;
-                                border-left: 1px gray solid; border-right: 1px gray solid;">
-            <tr>
-                <th>Penalty Type</th>
-                <th>Penalty Amount</th>
-            </tr>
-            <tr>
-                <td>Start time before 10:30am</td>
-                <td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td>
-            </tr>
-            <tr>
-                <td>Start time after 5:00pm</td>
-                <td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td>
-            </tr>
-            <tr>
-                <td>Mondays</td>
-                <td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td>
-            </tr>
-            <tr>
-                <td>Thursdays</td>
-                <td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td>
-            </tr>
-            <tr>
-                <td>Fridays</td>
-                <td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td>
-            </tr>
-            <tr>
-                <td>Time between classes &lt; 1 hour</td>
-                <td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td>
-            </tr>
-            <!-- <tr>
-                <td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td>
-                <td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td>
-            </tr> -->
-        </table>
-    </form>
     </BODY>
 </HTML>
