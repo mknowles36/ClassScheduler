@@ -181,7 +181,7 @@ function appendTableRow(data) {
     // Insert actual class cells
     for ( var j = 0; j < data.length - 1; j++ ) {
         var newCell = newRow.insertCell(i++);
-        newCell.innerHTML = data[j];
+        newCell.innerHTML = data[j].toStringWithBreak();
     }
 }
 
@@ -226,6 +226,10 @@ function Section( program, course, section, day, startTime, endTime )
 
     this.toString = function() {
         return this.day + ":" + this.startTime + "-" + this.endTime + " (" + this.program + "/" + this.course + "/" + this.section + ")";
+    };
+
+    this.toStringWithBreak = function() {
+        return this.day + ":" + this.startTime + "-" + this.endTime + "<br>(" + this.program + "/" + this.course + "/" + this.section + ")";
     };
 }
 
@@ -427,12 +431,12 @@ function genCourses( depth, schedule, result )
                                       border-left: 1px gray solid;
                                       border-right: 1px gray solid;">
                             <thead>
-                                <th style="width: 50px;">Badness</th>
-                                <th style="width: 50px;">Class 1</th>
-                                <th style="width: 50px;">Class 2</th>
-                                <th style="width: 50px;">Class 3</th>
-                                <th style="width: 50px;">Class 4</th>
-                                <th style="width: 50px;">Class 5</th>
+                                <th>Badness</th>
+                                <th>Class 1</th>
+                                <th>Class 2</th>
+                                <th>Class 3</th>
+                                <th>Class 4</th>
+                                <th>Class 5</th>
                             </thead>
                             <tbody></tbody>
                         </table>
