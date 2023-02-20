@@ -254,35 +254,35 @@ function genCourses( depth, schedule, result )
             var end = ct.end;
 
             // Scoring:
-            // - Penalty for classes starting before 10:30am
+            // - Badness for classes starting before 10:30am
             var dayStart = start % 144;
             if ( dayStart < MIN_CLASS_TIME ) {
-                score += parseInt( document.penalties1.earlyMorningPenalty.value );
+                score += parseInt( document.penalties1.earlyMorningBadness.value );
             }
 
-            // - Penalty for classes starting after 5:00pm
+            // - Badness for classes starting after 5:00pm
             var dayStart = start % 144;
             if ( dayStart >= MAX_CLASS_TIME ) {
-                score += parseInt( document.penalties1.eveningPenalty.value );
+                score += parseInt( document.penalties1.eveningBadness.value );
             }
 
-            // - Penalty for each class on a Monday or Friday
+            // - Badness for each class on a Monday or Friday
             if ( start < 144 ) {
-                score += parseInt( document.penalties2.mondaysPenalty.value );
+                score += parseInt( document.penalties2.mondaysBadness.value );
             } else if ( start >= ( 144 * 3 ) && start < ( 144 * 4 ) ) {
-                score += parseInt( document.penalties2.thursdaysPenalty.value );
+                score += parseInt( document.penalties2.thursdaysBadness.value );
             } else if ( start >= ( 144 * 4 ) ) {
-                score += parseInt( document.penalties2.fridaysPenalty.value );
+                score += parseInt( document.penalties2.fridaysBadness.value );
             }
 
-            // - Penalty for every inter-class gap that is less than 1 hour
+            // - Badness for every inter-class gap that is less than 1 hour
             if ( i > 0 ) {
                 if ( ( start - tmpSchedule[i-1].end ) < 12 ) {
-                    score += parseInt( document.penalties1.interClassPenalty.value );
+                    score += parseInt( document.penalties1.interClassBadness.value );
                 }
             }
 
-            // Record which day this one starts on, for the days-with-more-than-2-classes penalty
+            // Record which day this one starts on, for the days-with-more-than-2-classes badness
             var dayIndex = Math.floor( start / 144 );
             if ( typeof days[dayIndex] == "undefined" ) {
                 days[dayIndex] = 0;
@@ -291,10 +291,10 @@ function genCourses( depth, schedule, result )
         }
 
         // **** NOT USING THIS FOR NOW ****
-        // - Penalty for every day with more than 2 classes
+        // - Badness for every day with more than 2 classes
         // for ( var i = 0 ; i < 5; i++ ) {
         //     if ( days[i] > 2 ) {
-        //         score += parseInt( document.penalties1.tooManyClassesPerDayPenalty.value );
+        //         score += parseInt( document.penalties1.tooManyClassesPerDayBadness.value );
         //     }
         // }
 
@@ -344,24 +344,24 @@ function genCourses( depth, schedule, result )
                         <table rules=all style="border-top: 1px gray solid; border-bottom: 1px gray solid;
                                                 border-left: 1px gray solid; border-right: 1px gray solid;">
                             <tr>
-                                <th>Penalty Type</th>
-                                <th>Penalty Amount</th>
+                                <th>Badness Type</th>
+                                <th>Badness Amount</th>
                             </tr>
                             <tr>
                                 <td>Start time before 10:30am</td>
-                                <td><input name="earlyMorningPenalty" value="-200" onchange="genSchedule()"></td>
+                                <td><input name="earlyMorningBadness" value="-200" onchange="genSchedule()"></td>
                             </tr>
                             <tr>
                                 <td>Start time after 5:00pm</td>
-                                <td><input name="eveningPenalty" value="-200" onchange="genSchedule()"></td>
+                                <td><input name="eveningBadness" value="-200" onchange="genSchedule()"></td>
                             </tr>
                             <tr>
                                 <td>Time between classes &lt; 1 hour</td>
-                                <td><input name="interClassPenalty" value="-100" onchange="genSchedule()"></td>
+                                <td><input name="interClassBadness" value="-100" onchange="genSchedule()"></td>
                             </tr>
                             <!-- <tr>
-                                <td>Penalty for every day with more than 2 classes&nbsp;&nbsp;</td>
-                                <td><input name="tooManyClassesPerDayPenalty" value="-500" onchange="genSchedule()"></td>
+                                <td>Badness for every day with more than 2 classes&nbsp;&nbsp;</td>
+                                <td><input name="tooManyClassesPerDayBadness" value="-500" onchange="genSchedule()"></td>
                             </tr> -->
                         </table>
                     </form>
@@ -373,20 +373,20 @@ function genCourses( depth, schedule, result )
                                                 border-left: 1px gray solid;
                                                 border-right: 1px gray solid;">
                             <tr>
-                                <th>Penalty Type</th>
-                                <th>Penalty Amount</th>
+                                <th>Badness Type</th>
+                                <th>Badness Amount</th>
                             </tr>
                             <tr>
                                 <td>Mondays</td>
-                                <td><input name="mondaysPenalty" value="0" onchange="genSchedule()"></td>
+                                <td><input name="mondaysBadness" value="0" onchange="genSchedule()"></td>
                             </tr>
                             <tr>
                                 <td>Thursdays</td>
-                                <td><input name="thursdaysPenalty" value="-300" onchange="genSchedule()"></td>
+                                <td><input name="thursdaysBadness" value="-300" onchange="genSchedule()"></td>
                             </tr>
                             <tr>
                                 <td>Fridays</td>
-                                <td><input name="fridaysPenalty" value="-500" onchange="genSchedule()"></td>
+                                <td><input name="fridaysBadness" value="-500" onchange="genSchedule()"></td>
                             </tr>
                         </table>
                     </form>
