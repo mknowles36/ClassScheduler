@@ -344,6 +344,34 @@ function genCourses( depth, schedule, result )
     }
 }
         </SCRIPT>
+        <style>
+          .fixed_header {
+            border-collapse: collapse;
+            width: 800px;
+          }
+          .fixed_header tbody {
+            display: block;
+            height: 550px;
+            overflow: auto;
+          }
+          .fixed_header thead {
+            background: black;
+            color: #fff;
+          }
+          .fixed_header thead, .fixed_header tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+          }
+          .fixed_header thead {
+            width: calc( 100% - 1em )
+          }
+          .fixed_header th,
+          .fixed_header td {
+            padding: 5px;
+            text-align: left;
+          }
+        </style>
     </HEAD>
     <BODY onload="init(); genSchedule()">
         <table>
@@ -421,26 +449,17 @@ function genCourses( depth, schedule, result )
                         </table>
                     </form>
                 </td><td>
-                    <DIV STYLE="overflow: auto; width: 800; height: 600;
-                                border-top: 1px gray solid; border-bottom: 1px gray solid;
-                                border-left: 1px gray solid; border-right: 1px gray solid;
-                                padding:0px; margin: 0px">
-                        <table rules=all cellpadding=3 id="schedule"
-                               style="border-top: 1px gray solid;
-                                      border-bottom: 1px gray solid;
-                                      border-left: 1px gray solid;
-                                      border-right: 1px gray solid;">
-                            <thead>
-                                <th>Badness</th>
-                                <th>Class 1</th>
-                                <th>Class 2</th>
-                                <th>Class 3</th>
-                                <th>Class 4</th>
-                                <th>Class 5</th>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </DIV>
+                    <table class="fixed_header" rules=all cellpadding=3 id="schedule">
+                        <thead>
+                            <th>Badness</th>
+                            <th>Class 1</th>
+                            <th>Class 2</th>
+                            <th>Class 3</th>
+                            <th>Class 4</th>
+                            <th>Class 5</th>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </td>
             </tr>
         </table>
