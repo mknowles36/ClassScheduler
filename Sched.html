@@ -77,7 +77,6 @@ function init() {
     var globalClassNum = 0;
     for ( var i = 0; i < programs.length; i++ ) {
         currentProgram = programs[i];
-        console.log("HERE 1 " + currentProgram.length)
 
         // Determine the number of sections in this program (used in rowspan, below)
         var numProgramSections = 0;
@@ -165,7 +164,7 @@ function genSchedule()
     var newLength = theTableBody.rows.length;
 
     for ( var i = 0; i < result.length; i++ ) {
-       appendTableRow( result[i] );
+        appendTableRow( result[i] );
     }
 }
 
