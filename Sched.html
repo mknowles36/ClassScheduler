@@ -2,6 +2,55 @@
     <HEAD>
         <SCRIPT LANGUAGE="JavaScript">
 
+// High-Level Overview
+// -------------------
+//
+// Inputs:
+//   - Table with all the courses you need to take and all of their sections
+//     - Indication (via checkboxes that the user can check and uncheck) of which sections
+//       are still available at the current moment
+//     - This is:
+//       - The 'classes' array-of-arrays defined at the start
+//       - The 'classesTable' HTML table that is defined in the HTML section at the end
+//       - The init() method that populates the rows of the 'classesTable' table.
+//         - NOTE: The init() method contains a bunch of extra code to compute the number
+//           of sections in each program to properly specify the 'rowspan' value of
+//           the Program Name cell for each program (so it doesn't end up getting repeated
+//           on ech row)
+//   - Badness values that the user can adjust for various criteria:
+//     - Criteria include:
+//       - Classes that start less than an hour after a previous class ends
+//       - Early morning
+//       - Evening courses
+//       - Classes on Mondays, Thursdays, Fridays
+//     - This is:
+//       - The various input cells in the tables in the 'penalties1' and 'penalties2' forms:
+//       - The use of those values (eg,. 'document.penalties1.earlyMorningBadness.value') in
+//         the genCourses() method.
+//
+// Computation:
+//   - The main computation happens in the genSchedule() method that is called whenever
+//     anything changes (from the 'onload' handler and the various 'onchange' handlers)
+//   - Start by generating all possible schedules consisting of all the combinations of
+//     sections of each class that are still available
+//     - This happens in the genCourses() recursive function that is initially called from
+//       genSchedule()
+//   - Filter out any classes that overlap, since those are not doable in practice
+//     - This also happens in the 'else' branch of the big 'if (depth == classes.length)'
+//       in genCourses()
+//   - For each remaining viable schedule, calculate a 'badness' score according to
+//     whether it hits any of the badness criteria, adding up all of the badness scores
+//     - This happens in the 'if' branch of the big 'if' in genCourses()
+//   - Sort the entire set of badness-scored schedules
+//      - This happens in 'result.sort( scheduleComparator );' in genSchedule()
+//   - List the sorted list of schedules, along with each of their badness values,
+//     in a scrollable table.
+//      - This happens in last half of genSchedule() where it loops through the
+//        sorted 'result' array and calls appendTableRow() for each element of result
+//        (each element is an array of course sections that make up a schedule, along
+//        with the badness score as the last element in the array)
+
+
 // HTML element of the body of the table that holds the ranked list of all combinations
 // of class combinations
 var theTableBody;
@@ -159,9 +208,6 @@ function genSchedule()
     while( theTableBody.hasChildNodes() ) {
         theTableBody.removeChild( theTableBody.firstChild );
     }
-
-    // theTableBody.innerHTML = "";
-    var newLength = theTableBody.rows.length;
 
     for ( var i = 0; i < result.length; i++ ) {
         appendTableRow( result[i] );
